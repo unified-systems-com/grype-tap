@@ -1,6 +1,6 @@
 {
   "description": "The pinned Grype release binary (req-grype-binary). The version is the only place it appears; every archive sha256 is the release's own published digest, re-checked against the downloaded archive by tap_plugin.grype.pin_tool, which also computes binary_sha256, the digest of the grype executable inside. Renovate bumps `version`; run the pin tool to refresh the digests.",
-  "version": "v0.120.1",
+  "version": "v0.121.1",
   "checksums_url": "https://github.com/anchore/grype/releases/download/v0.120.1/grype_0.120.1_checksums.txt",
   "platforms": {
     "linux/amd64": {
