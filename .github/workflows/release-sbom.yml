@@ -24,6 +24,6 @@ jobs:
       contents: read
       id-token: write
       attestations: write
-    uses: unified-systems-com/tap/.github/workflows/plugin-release-sbom.yml@879c6ee6a56f68022860c2c05a0bdc9f433612ae # core main 2026-10-16, pinned like ci.yml: the release/attestation lane must not ride a mutable ref
+    uses: unified-systems-com/tap/.github/workflows/plugin-release-sbom.yml@1d033ea42bc7766c42008a5acb82bf6f1a5ac166 # core main 2026-10-16, pinned like ci.yml: the release/attestation lane must not ride a mutable ref
     with:
       plugin_slug: grype
