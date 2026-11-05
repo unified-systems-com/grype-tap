@@ -1,6 +1,6 @@
 manifest_version = "0"
 plugin_version = "0.1.1" # x-release-please-version
-requires_tap = ">=0.3.0"
+requires_tap = ">=0.3.1"
 slug = "grype"
 name = "TAP Grype"
 description = "A grid-native Grype scan: builds an SBOM from the packages on the grid, matches it against Grype's advisory database on a schedule, and writes findings, KEV and EPSS back to the grid."
