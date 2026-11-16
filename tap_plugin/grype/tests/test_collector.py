@@ -33,6 +33,7 @@ from tap_plugin.grype.collectors import grype_collector as mod
 from tap_plugin.grype.database import RunResult
 from tap_plugin.grype.home import HOME_ENV
 from tap_plugin.grype.tests import recordings
+from tap_plugin.grype.tests.conftest import dimension_view
 from tap_plugin.grype.tests.test_plan import parsed
 from tap_plugin.grype.tests.test_reader import link, make, package
 
@@ -372,7 +373,7 @@ class TestSeedsAndRegistration:
         scanner = get_model_class("compliance_core__compliance_scanner").objects.get(source="grype", scanner_key="grype-tap")
         assert reader.read_scanner_id() == str(scanner.entity_id)
         assert scanner.name == "Grype" and scanner.configuration == {"staleness_hours": 48}
-        assert Entity.objects.get(pk=scanner.entity_id).dimensions == {"compliance": "scanner"}
+        assert dimension_view(Entity.objects.get(pk=scanner.entity_id)) == {"compliance": "scanner"}
 
     def test_the_scan_schedule_targets_the_registered_collector_and_runs_after_the_refresh(self) -> None:
         from tap_cares.registry import NAMESPACE_COLLECTOR
