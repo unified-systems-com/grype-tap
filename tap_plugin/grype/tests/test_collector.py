@@ -9,6 +9,7 @@ scan, the plan, the write through GRIFT as the collector role, and what the grid
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import uuid
@@ -29,6 +30,7 @@ from tap_grid.grift import grift_import
 from tap_grid.models import Edge, Entity
 from tap_grid.registry import get_model_class
 from tap_plugin.grype import database, document, reader
+from tap_plugin.grype.binary_pin import load_pin
 from tap_plugin.grype.collectors import grype_collector as mod
 from tap_plugin.grype.database import RunResult
 from tap_plugin.grype.home import HOME_ENV
@@ -39,6 +41,19 @@ from tap_plugin.grype.tests.test_reader import link, make, package
 
 PACKAGE_DIR = Path(mod.__file__).parent.parent
 VERSION = recordings.VERSION
+
+
+@pytest.fixture(autouse=True)
+def the_pin_reads_at_the_recordings_version(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests replay real recorded Grype output, and the collector refuses output from any version but the pin's.
+
+    The recordings keep the version they were recorded from (``recordings.VERSION``); the pin moves with every Grype
+    release. So the collector under test reads the real pin with only its version set to the recordings' one. What
+    this module proves is the orchestration, not that the pinned release prints this shape: ``test_binary.py`` checks
+    the pin file itself, and the live tier runs the pinned binary.
+    """
+    real = load_pin()
+    monkeypatch.setattr(mod, "load_pin", lambda: dataclasses.replace(real, version=f"v{VERSION}"))
 
 
 def stamp(when: datetime) -> str:
