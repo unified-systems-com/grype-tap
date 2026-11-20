@@ -1,19 +1,19 @@
 {
   "description": "The pinned Grype release binary (req-grype-binary). The version is the only place it appears; every archive sha256 is the release's own published digest, re-checked against the downloaded archive by tap_plugin.grype.pin_tool, which also computes binary_sha256, the digest of the grype executable inside. Renovate bumps `version`; run the pin tool to refresh the digests.",
-  "version": "v0.120.1",
-  "checksums_url": "https://github.com/anchore/grype/releases/download/v0.120.1/grype_0.120.1_checksums.txt",
+  "version": "v0.122.1",
+  "checksums_url": "https://github.com/anchore/grype/releases/download/v0.122.1/grype_0.122.1_checksums.txt",
   "platforms": {
     "linux/amd64": {
-      "description": "The Grype v0.120.1 release archive for linux/amd64.",
-      "url": "https://github.com/anchore/grype/releases/download/v0.120.1/grype_0.120.1_linux_amd64.tar.gz",
-      "sha256": "0a9ee97ef5ae2ee953b0a80098105052e846cdbe319a57d808b519c33cd1343d",
-      "binary_sha256": "d6e3248b0e788b4da7450a9e03d1e72811771cf97de3640a18e6517bf6507eb7"
+      "description": "The Grype v0.122.1 release archive for linux/amd64.",
+      "url": "https://github.com/anchore/grype/releases/download/v0.122.1/grype_0.122.1_linux_amd64.tar.gz",
+      "sha256": "f1ba7e2917ee1395618de20a98da0aa7c0fb1788927797651047c50502a37538",
+      "binary_sha256": "322a7839c1c9f6c1b6ac0aa6b61a7d94139b7f24780b82a05b63caab56d4286b"
     },
     "linux/arm64": {
-      "description": "The Grype v0.120.1 release archive for linux/arm64.",
-      "url": "https://github.com/anchore/grype/releases/download/v0.120.1/grype_0.120.1_linux_arm64.tar.gz",
-      "sha256": "29f47391dc283aa79fcc38e65224cd61f64dec0ecfd0db7074128ebf8ff23514",
-      "binary_sha256": "94afbea0a9b65a3a83b820e622e8ac337e26608c860315208d58dad9a80b25db"
+      "description": "The Grype v0.122.1 release archive for linux/arm64.",
+      "url": "https://github.com/anchore/grype/releases/download/v0.122.1/grype_0.122.1_linux_arm64.tar.gz",
+      "sha256": "819e5be3d9516432fedb7b6b56df7306c3a16607606dfc05826eefbb00e471da",
+      "binary_sha256": "bd313717cfe7fa6807fed57942b661b02aa1709c77faaf3079a9b217b3a3d98c"
     }
   }
 }

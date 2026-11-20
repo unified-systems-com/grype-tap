@@ -106,7 +106,7 @@ class TestPinFile(unittest.TestCase):
             "checksums url for another version": lambda d: d.update(checksums_url=d["checksums_url"].replace("0.", "1.")),
             "unsupported platform": lambda d: d["platforms"].update({"windows/amd64": d["platforms"]["linux/amd64"]}),
             "url for another version": lambda d: d["platforms"]["linux/amd64"].update(
-                url=d["platforms"]["linux/amd64"]["url"].replace("0.120", "0.119")
+                url=d["platforms"]["linux/amd64"]["url"].replace(d["version"].removeprefix("v"), "0.0.1")
             ),
             "short sha": lambda d: d["platforms"]["linux/amd64"].update(sha256="abc"),
             "short binary sha": lambda d: d["platforms"]["linux/amd64"].update(binary_sha256="abc"),
