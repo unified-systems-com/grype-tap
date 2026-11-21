@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/unified-systems-com/grype-tap/compare/v0.1.1...v0.1.2) (2026-11-21)
+
+
+### Bug Fixes
+
+* **ci-record:** pin compliance_core v0.8.12 and computing_core v0.10.8, the releases that carry their Dimension seeds ([97320de](https://github.com/unified-systems-com/grype-tap/commit/97320de651799a142128ca946256f9fbb98abd2a))
+* **ci-record:** pin compliance_core v0.8.12 and computing_core v0.10.8, the releases that carry their Dimension seeds ([94d20b9](https://github.com/unified-systems-com/grype-tap/commit/94d20b9de3605426e89a51ca2d5e469a33aa1f27))
+
 ## [0.1.1](https://github.com/unified-systems-com/grype-tap/compare/v0.1.0...v0.1.1) (2026-10-30)
 
 
