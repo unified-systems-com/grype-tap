@@ -29,8 +29,8 @@ NOW = datetime(2026, 10, 19, 4, 43, tzinfo=UTC)
 VERSION = recordings.VERSION
 
 
-def make(type_slug: str, payload: dict[str, Any]) -> Entity:
-    result = create_node(type_slug, payload)
+def make(type_slug: str, payload: dict[str, Any], dimensions: dict[str, str] | None = None) -> Entity:
+    result = create_node(type_slug, payload, dimensions=dimensions)
     assert result.success, f"create_node failed: {result.errors}"
     return Entity.objects.get(pk=result.entity_id)
 
@@ -80,8 +80,8 @@ class TestOperatingSystems:
         n = {
             "alpine": make("computing_core__operating_system", {"os_id": "alpine", "version_id": "3.20", "build_id": ""}),
             "wolfi": make("computing_core__operating_system", {"os_id": "wolfi", "version_id": "", "build_id": "rolling"}),
-            "h1": make("computing_core__host", {"realm": "test", "stable_id": "h1"}),
-            "h2": make("computing_core__host", {"realm": "test", "stable_id": "h2"}),
+            "h1": make("computing_core__host", {"stable_id": "h1"}, dimensions={"tap.computing.host_type": "assert"}),
+            "h2": make("computing_core__host", {"stable_id": "h2"}, dimensions={"tap.computing.host_type": "assert"}),
             "shared": package("shared"),
             "only_h1": package("only-h1"),
             "orphan": package("orphan"),

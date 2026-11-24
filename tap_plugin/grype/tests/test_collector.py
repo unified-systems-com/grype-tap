@@ -342,7 +342,7 @@ class TestTheGridMoving:
         from tap_grid.services import patch_node
 
         os_node = make("computing_core__operating_system", {"os_id": "wolfi", "version_id": "", "build_id": "rolling", "name": "Wolfi"})
-        host = make("computing_core__host", {"realm": "test", "stable_id": "h1"})
+        host = make("computing_core__host", {"stable_id": "h1"}, dimensions={"tap.computing.host_type": "assert"})
         link(host, os_node, "RUNS_OPERATING_SYSTEM__computing_core")
         for entity in self.packages.values():
             link(host, entity, "INSTALLS_PACKAGE__computing_core")
