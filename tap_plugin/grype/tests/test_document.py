@@ -44,9 +44,17 @@ def known_for(plan_: plan.Plan) -> frozenset[str]:
     return frozenset(ids)
 
 
+def header(doc) -> dict:
+    """A stand-in for core's ``build_header`` with no database: format "1", the spine and every carried type at 1."""
+    carried = {"batch"}
+    for batch in doc["batches"]:
+        carried |= {n["entity"]["entity_type"] for n in batch["nodes"]} | {e["edge"]["edge_type"] for e in batch["edges"]}
+    return {"grift_version": "1", "spine_version": 1, "type_versions": dict.fromkeys(sorted(carried), 1)}
+
+
 def context(plan_: plan.Plan, **kw) -> document.Context:
     known = kw.pop("known_ids", known_for(plan_))
-    return document.Context(scanner_id="scanner-0", field_names=FIELDS, known_ids=known, new_id=counter(), now=lambda: NOW, **kw)
+    return document.Context(scanner_id="scanner-0", field_names=FIELDS, known_ids=known, new_id=counter(), now=lambda: NOW, header=header, **kw)
 
 
 def targets_ctx(grid) -> dict[str, str]:
@@ -62,11 +70,22 @@ class TestFirstRunDocument(unittest.TestCase):
         cls.out = document.build_document(cls.plan, context(cls.plan))
         cls.batch = cls.out["batches"][0]
 
+    def test_the_header_is_made_once_from_the_complete_document(self) -> None:
+        seen: list[dict] = []
+
+        def recording(doc) -> dict:
+            seen.append({"batches": len(doc["batches"]), "nodes": len(doc["batches"][0]["nodes"]), "edges": len(doc["batches"][0]["edges"])})
+            return header(doc)
+
+        out = document.build_document(self.plan, dataclasses.replace(context(self.plan), header=recording))
+        self.assertEqual(seen, [{"batches": 1, "nodes": len(out["batches"][0]["nodes"]), "edges": len(out["batches"][0]["edges"])}])
+
     def kinds(self, key: str, field: str) -> list[str]:
         return [item["entity"][field] for item in self.batch[key]]
 
-    def test_it_is_one_batch_of_grift_v0(self) -> None:
-        self.assertEqual(self.out["metadata"], {"grift_version": "0"})
+    def test_it_is_one_batch_of_grift_format_1(self) -> None:
+        self.assertEqual(self.out["metadata"]["grift_version"], "1")
+        self.assertEqual(self.out["metadata"], header(self.out))  # made from the finished document
         self.assertEqual(len(self.out["batches"]), 1)
         self.assertNotIn("deletes", self.batch)  # nothing replaced on a first run
 
@@ -298,7 +317,7 @@ class TestAgainstTheGriftSchema(unittest.TestCase):
         )
         for label, plan_, existing in cases:
             with self.subTest(label):
-                out = document.build_document(plan_, document.Context(scanner_id=scanner, field_names=FIELDS, known_ids=known_for(plan_), existing_nodes=existing, new_id=counter(), now=lambda: NOW))
+                out = document.build_document(plan_, document.Context(scanner_id=scanner, field_names=FIELDS, known_ids=known_for(plan_), existing_nodes=existing, new_id=counter(), now=lambda: NOW, header=header))
                 jsonschema.validate(out, schema)
 
 
