@@ -18,6 +18,7 @@ import tap_plugin.compliance_core.models  # noqa: F401 - trigger model registrat
 import tap_plugin.computing_core.models  # noqa: F401
 
 from tap_grid.grift import grift_import
+from tap_grid.grift.upgrade import build_header
 from tap_grid.models import Edge, Entity
 from tap_grid.registry import get_model_class
 from tap_grid.services import create_edge, create_node, delete_node, patch_node
@@ -165,6 +166,12 @@ class TestEndToEnd:
             existing_nodes=reader.read_nodes(the_plan),
         )
         return the_plan, document.build_document(the_plan, ctx)
+
+    def test_the_document_carries_the_grids_format_1_header(self) -> None:
+        _, built = self.prepare("run-header")
+        assert built["metadata"]["grift_version"] == "1"
+        assert built["metadata"] == build_header(built)  # core's header, read from this grid's database
+        assert {document.RUN, document.FINDING, document.PERFORMS, "batch"} <= set(built["metadata"]["type_versions"])
 
     def vuln(self, vuln_id: str) -> Any:
         return get_model_class(document.VULNERABILITY).objects.get(vuln_id=vuln_id)

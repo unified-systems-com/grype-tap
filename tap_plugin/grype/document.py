@@ -1,6 +1,6 @@
 """The GRIFT document of one run (req-grype-collector, "Landing"). Stdlib only, no Django and no I/O.
 
-``build_document`` turns a ``plan.Plan`` into one single-batch GRIFT v0 document: the run node and its scanner
+``build_document`` turns a ``plan.Plan`` into one single-batch GRIFT document at format "1": the run node and its scanner
 edge, the findings the plan creates, the vulnerabilities it mints, the coverage and reporting edges. It deletes nothing: a collector is
 not given the delete capability, so earlier runs' edges stay and the latest is read by the run's time. The collector hands the result to ``submit_grift``, the one
 write path a collector is given, so the whole run lands in one all-or-nothing batch.
@@ -10,6 +10,10 @@ plugin owns. Every update to an existing node is therefore a read-modify-write: 
 was read (properties, dimensions and version), this module overlays the planned fields on those properties, and the
 envelope declares the version it read as ``entity_expected_version``. If anyone wrote the node in between, GRIFT
 refuses the batch and the collector re-reads and re-plans; nothing is forced.
+
+The header (``metadata``: the format, the spine version and every carried type's version) is not this module's to
+know: the versions are the grid's. ``Context.header`` makes it from the finished document, and by default that is
+core's ``tap_grid.grift.upgrade.build_header``, imported only when called, so this module still imports without Django.
 """
 
 from __future__ import annotations
@@ -24,7 +28,6 @@ from tap_plugin.grype import plan as planning
 
 COLLECTION_FORMAT = "tap.grype.collection-v0"
 BATCH_SOURCE = "tap_plugin.grype.collectors.grype_collector"
-_GRIFT_VERSION = "0"
 
 FINDING = "compliance_core__compliance_finding"
 RUN = "compliance_core__compliance_scan_run"
@@ -90,6 +93,16 @@ class Context:
     existing_nodes: Mapping[str, ExistingNode] = field(default_factory=dict)
     new_id: Callable[[], str] = lambda: str(uuid7())
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
+    #: The header of the finished document: the format "1" ``metadata`` with the spine and every carried type's
+    #: version, read from the grid. Called once, after the batch is complete.
+    header: Callable[[Mapping[str, Any]], dict[str, Any]] = lambda doc: _grid_header(doc)
+
+
+def _grid_header(doc: Mapping[str, Any]) -> dict[str, Any]:
+    """Core's header for ``doc``, at the versions this grid's database records (``req-grift-header-versions``)."""
+    from tap_grid.grift.upgrade import build_header
+
+    return build_header(doc)
 
 
 def _node(entity_id: str, entity_type: str, name: str, dimensions: Mapping[str, str], fields: Mapping[str, Any], version: int | None = None) -> dict[str, Any]:
@@ -131,7 +144,7 @@ def _overlay(
 
 
 def build_document(plan: planning.Plan, ctx: Context, *, batch_name: str | None = None) -> dict[str, Any]:
-    """The single-batch GRIFT v0 document that carries out ``plan``."""
+    """The single-batch GRIFT document, at format "1", that carries out ``plan``."""
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []
     ids: dict[tuple[str, str], str] = {}
@@ -201,4 +214,6 @@ def build_document(plan: planning.Plan, ctx: Context, *, batch_name: str | None 
         "nodes": nodes,
         "edges": edges,
     }
-    return {"metadata": {"grift_version": _GRIFT_VERSION}, "_reserved": {}, "batches": [batch]}
+    out: dict[str, Any] = {"metadata": {}, "_reserved": {}, "batches": [batch]}
+    out["metadata"] = ctx.header(out)
+    return out
