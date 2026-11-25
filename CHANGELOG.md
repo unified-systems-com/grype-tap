@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/unified-systems-com/grype-tap/compare/v0.1.2...v0.1.3) (2026-11-25)
+
+
+### Bug Fixes
+
+* **grift:** write the format "1" header from core's build_header ([4e00ef1](https://github.com/unified-systems-com/grype-tap/commit/4e00ef1229980261f2782466562c1bb3c787c76c))
+* **grift:** write the format "1" header from core's build_header ([85af7f9](https://github.com/unified-systems-com/grype-tap/commit/85af7f93a8afc0b6f5cb6c007d4d0ac44916147a))
+
 ## [0.1.2](https://github.com/unified-systems-com/grype-tap/compare/v0.1.1...v0.1.2) (2026-11-24)
 
 
